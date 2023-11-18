@@ -2,8 +2,8 @@
 
 #include "window.hpp"
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+typedef struct HWND__ *HWND;
+typedef struct HINSTANCE__ *HINSTANCE;
 
 namespace onyx {
 

@@ -1,5 +1,8 @@
 #include "win32_window.hpp"
 
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
 namespace {
 
 LRESULT CALLBACK windowCallback(HWND handle, UINT message, WPARAM wparam, LPARAM lparam) {
@@ -27,7 +30,7 @@ LRESULT CALLBACK windowCallback(HWND handle, UINT message, WPARAM wparam, LPARAM
 namespace onyx {
 
 Win32Window::Win32Window(HINSTANCE instance, int32_t width, int32_t height, const std::string &title)
-	: Window(width, height, title) {
+: Window{width, height, title} {
 	WNDCLASS window_class{
 		.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC,
 		.lpfnWndProc = windowCallback,
@@ -51,7 +54,7 @@ Win32Window::Win32Window(HINSTANCE instance, int32_t width, int32_t height, cons
 void Win32Window::update() const {
 	MSG message;
 
-	while (PeekMessage(&message, 0, 0, 0, PM_REMOVE)) {
+	while (PeekMessage(&message, nullptr, 0, 0, PM_REMOVE)) {
 		TranslateMessage(&message);
 		DispatchMessage(&message);
 	}

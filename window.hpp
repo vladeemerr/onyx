@@ -18,7 +18,7 @@ public:
 	Window(const Window &) = delete;
 	Window(Window &&) noexcept = delete;
 	Window &operator=(const Window &) = delete;
-	Window &operator=(Window &&) = delete;
+	Window &operator=(Window &&) noexcept = delete;
 
 	inline void close() {
 		closed_ = true;
