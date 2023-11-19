@@ -15,6 +15,10 @@ public:
 	Win32Window(HINSTANCE instance, int32_t width, int32_t height, const std::string &title);
 
 	void update() const;
+
+	inline HWND getHandle() const {
+		return handle_;
+	}
 };
 
 } // namespace onyx
