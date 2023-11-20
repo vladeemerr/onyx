@@ -15,6 +15,12 @@ struct IDXGISwapChain1;
 struct ID3D11Texture2D;
 struct ID3D11RenderTargetView;
 struct ID3D11DepthStencilView;
+struct ID3D10Blob;
+struct ID3D11VertexShader;
+struct ID3D11PixelShader;
+struct ID3D11Buffer;
+struct ID3D11InputLayout;
+struct ID3D11RasterizerState1;
 
 namespace onyx {
 
@@ -37,11 +43,22 @@ private:
 	ID3D11Texture2D *depthbuffer_;
 	ID3D11DepthStencilView *depthbuffer_view_;
 
+	ID3D10Blob *vertex_shader_code_;
+	ID3D10Blob *pixel_shader_code_;
+
+	ID3D11VertexShader *vertex_shader_;
+	ID3D11PixelShader *pixel_shader_;
+	ID3D11InputLayout *shader_input_layout_;
+
+	ID3D11Buffer *vertex_buffer_;
+
+	ID3D11RasterizerState1 *rasterizer_state_;
+
 public:
-	D3D11Renderer(HWND window_handle);
+	D3D11Renderer(const HWND window_handle);
 	~D3D11Renderer();
 
-	void render() override;
+	void render() noexcept override;
 };
 
 } // namespace onyx

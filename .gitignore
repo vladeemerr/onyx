@@ -1,6 +1,10 @@
+.vs/
+
 *.pdb
 *.obj
 *.exe
+*.ilk
+*.cso
 
 *.sublime-project
 *.sublime-workspace

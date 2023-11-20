@@ -14,6 +14,7 @@ protected:
 public:
 	Window(int32_t width, int32_t height, const std::string &title)
 		: width_{width}, height_{height}, title_{title} {}
+	virtual ~Window() {}
 
 	Window(const Window &) = delete;
 	Window(Window &&) noexcept = delete;

@@ -6,7 +6,7 @@ class Renderer {
 public:
 	virtual ~Renderer() {}
 
-	virtual void render() {}
+	virtual void render() noexcept = 0;
 };
 
 } // namespace onyx
