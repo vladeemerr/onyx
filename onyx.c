@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 
 #define EXIT_WITH_ERROR(MESSAGE) do { \
 	fprintf(stderr, "%s@%s:%d: %s\n", __FUNCTION__, __FILE__, __LINE__, MESSAGE); \
@@ -25,22 +25,22 @@ static SDL_Renderer* renderer;
 static SDL_Texture* backbuffer;
 
 int main(void) {
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) {
+	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS)) {
 		EXIT_WITH_ERROR(SDL_GetError());
 	}
 
 	window = SDL_CreateWindow(DEFAULT_WINDOW_TITLE,
-	                          SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 	                          DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT,
 	                          0u);
 	if (!window) {
 		EXIT_WITH_ERROR(SDL_GetError());
 	}
 
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
+	renderer = SDL_CreateRenderer(window, NULL);
 	if (!renderer) {
 		EXIT_WITH_ERROR(SDL_GetError());
 	}
+
 
 	backbuffer = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_XRGB8888,
 	                               SDL_TEXTUREACCESS_STREAMING,
@@ -50,12 +50,12 @@ int main(void) {
 	}
 
 	while (running) {
-		uint64_t time = SDL_GetTicks64();
+		uint64_t time = SDL_GetTicks();
 
 		SDL_Event ev;
 		while (SDL_PollEvent(&ev)) {
 			switch (ev.type) {
-				case SDL_QUIT:
+				case SDL_EVENT_QUIT:
 					running = false;
 					break;
 			}
@@ -64,13 +64,15 @@ int main(void) {
 		uint32_t* pixels = NULL;
 		int32_t pitch = 0;
 		SDL_LockTexture(backbuffer, NULL, (void**)&pixels, &pitch); {
-			SDL_memset4(pixels, 0x101010, DEFAULT_WINDOW_WIDTH * DEFAULT_WINDOW_HEIGHT);
+			SDL_memset4(pixels, 0x101010, width * height);
 		} SDL_UnlockTexture(backbuffer);
 
-		SDL_RenderCopy(renderer, backbuffer, NULL, NULL);
+		SDL_RenderTexture(renderer, backbuffer, NULL, NULL);
 		SDL_RenderPresent(renderer);
 	}
 
+	SDL_DestroyTexture(backbuffer);
+	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 }
