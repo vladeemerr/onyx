@@ -1,15 +1,55 @@
 #include "graphics.h"
 
+#include <stdio.h>
 #include <math.h>
 
-// TODO: Clipping
 void nx_fill_rect(const nx_framebuffer framebuffer,
                   const nx_int32x2 origin, const int32x2 size,
                   const uint32_t color) {
-	for (int32_t y = origin.y, ye = y + size.y; y != ye; ++y) {
-		for (int32_t x = origin.x, xe = x + size.x; x != xe; ++x) {
-			framebuffer.pixels[y * framebuffer.width + x] = color;
+	int32_t left = origin.x, top = origin.y, right, bottom;
+	int32_t width = size.x, height = size.y;
+	int32_t overflow;
+
+	if (left < 0) {
+		width += left;
+		left = 0;
+	}
+
+	if (top < 0) {
+		height += top;
+		top = 0;
+	}
+
+	right = left + width;
+	bottom = top + height;
+
+	overflow = right - framebuffer.width;
+
+	if (overflow > 0) {
+		width -= overflow;
+		right = framebuffer.width;
+	}
+
+	overflow = bottom - framebuffer.height;
+
+	if (overflow > 0) {
+		height -= overflow;
+		bottom = framebuffer.height;
+	}
+
+	if (width * height <= 0)
+		return;
+
+	overflow = left;
+
+	while (top < bottom) {
+		while (left < right) {
+			framebuffer.pixels[top * framebuffer.width + left] = color;
+			++left;
 		}
+
+		left = overflow;
+		++top;
 	}
 }
 

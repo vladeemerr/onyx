@@ -77,15 +77,23 @@ int main(void) {
 			SDL_memset4(frontbuffer.pixels, 0x101010,
 			            frontbuffer.width * frontbuffer.height);
 
+#if 0
 			int32x2 line[2] = {{frontbuffer.width / 2, frontbuffer.height / 2}};
-			line[1].x = line[0].x + (int32_t)(256.0f * sinf(time * 0.0001f));
-			line[1].y = line[0].y + (int32_t)(256.0f * cosf(time * 0.0001f));
+			line[1].x = line[0].x + );
+			line[1].y = line[0].y + );
 
 			nx_fill_rect(frontbuffer, (int32x2){line[0].x - 1, line[0].y - 1},
 			             (int32x2){3, 3}, 0xffff0000);
 			nx_fill_rect(frontbuffer, (int32x2){line[1].x - 1, line[1].y - 1},
 			             (int32x2){3, 3}, 0xff0000ff);
 			nx_draw_line(frontbuffer, line, 0xffffffff);
+#else
+			const int32x2 hr = {frontbuffer.width / 2, frontbuffer.height / 2};
+			int32x2 s = {256, 256};
+			int32x2 p = {hr.x - s.x / 2 + (int32_t)(hr.x * 1.5f * cosf(time * 0.001f)),
+			             hr.y - s.y / 2 + (int32_t)(hr.y * 1.5f * sinf(time * 0.001f))};
+			nx_fill_rect(frontbuffer, p, s, 0xffffffff);
+#endif
 		} SDL_UnlockTexture(backbuffer);
 
 		SDL_RenderTexture(renderer, backbuffer, NULL, NULL);
