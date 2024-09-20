@@ -1,4 +1,6 @@
-CFLAGS := -std=c11 -O0 -g -I./vendor/libsdl3/include -Wall -Wextra -fno-diagnostics-show-caret
+CFLAGS := -std=c11 -O0 -g -I./vendor/libsdl3/include\
+	-Wall -Wextra -fno-diagnostics-show-caret\
+	-DNX_USE_SHORT_NAMES
 LDFLAGS := -lm
 STATICLIBS := ./vendor/libsdl3/build/libSDL3.a
 

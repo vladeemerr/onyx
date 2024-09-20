@@ -1,1 +1,2 @@
 -I./vendor/libsdl3/include
+-DNX_USE_SHORT_NAMES

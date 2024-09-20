@@ -3,8 +3,11 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #include <SDL3/SDL.h>
+
+#include "graphics.h"
 
 #define EXIT_WITH_ERROR(MESSAGE) do { \
 	fprintf(stderr, "%s@%s:%d: %s\n", __FUNCTION__, __FILE__, __LINE__, MESSAGE); \
@@ -23,6 +26,8 @@ static volatile bool running = true;
 static SDL_Window* window;
 static SDL_Renderer* renderer;
 static SDL_Texture* backbuffer;
+
+static nx_framebuffer frontbuffer;
 
 int main(void) {
 	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS)) {
@@ -49,6 +54,9 @@ int main(void) {
 		EXIT_WITH_ERROR(SDL_GetError());
 	}
 
+	frontbuffer.width = DEFAULT_WINDOW_WIDTH;
+	frontbuffer.height = DEFAULT_WINDOW_HEIGHT;
+
 	while (running) {
 		uint64_t time = SDL_GetTicks();
 
@@ -64,7 +72,20 @@ int main(void) {
 		uint32_t* pixels = NULL;
 		int32_t pitch = 0;
 		SDL_LockTexture(backbuffer, NULL, (void**)&pixels, &pitch); {
-			SDL_memset4(pixels, 0x101010, width * height);
+			frontbuffer.pixels = pixels;
+
+			SDL_memset4(frontbuffer.pixels, 0x101010,
+			            frontbuffer.width * frontbuffer.height);
+
+			int32x2 line[2] = {{frontbuffer.width / 2, frontbuffer.height / 2}};
+			line[1].x = line[0].x + (int32_t)(256.0f * sinf(time * 0.0001f));
+			line[1].y = line[0].y + (int32_t)(256.0f * cosf(time * 0.0001f));
+
+			nx_fill_rect(frontbuffer, (int32x2){line[0].x - 1, line[0].y - 1},
+			             (int32x2){3, 3}, 0xffff0000);
+			nx_fill_rect(frontbuffer, (int32x2){line[1].x - 1, line[1].y - 1},
+			             (int32x2){3, 3}, 0xff0000ff);
+			nx_draw_line(frontbuffer, line, 0xffffffff);
 		} SDL_UnlockTexture(backbuffer);
 
 		SDL_RenderTexture(renderer, backbuffer, NULL, NULL);
